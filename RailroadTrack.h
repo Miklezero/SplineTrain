@@ -3,6 +3,9 @@
 
 #include "General.h"
 
+
+#include "Bogie.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "RailroadTrack.generated.h"
@@ -45,4 +48,12 @@ public:
 		USplineComponent* GetSpline();
 
 	void GenerateComponents(USplineComponent* spline, TArray<USplineMeshComponent*>* components);
+
+	UFUNCTION()
+		void BeginOverlayTriggerBoxStart(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void BeginOverlayTriggerBoxEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

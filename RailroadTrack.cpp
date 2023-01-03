@@ -30,6 +30,8 @@ ARailroadTrack::ARailroadTrack()
 	triggerBoxEnd->AddLocalOffset(FVector(posSecondPoint.X - 64, posSecondPoint.Y, posSecondPoint.Z + 54));
 	triggerBoxEnd->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
+	triggerBoxStart->OnComponentBeginOverlap.AddDynamic(this, &ARailroadTrack::BeginOverlayTriggerBoxStart);
+	triggerBoxEnd->OnComponentBeginOverlap.AddDynamic(this, &ARailroadTrack::BeginOverlayTriggerBoxEnd);
 }
 
 void ARailroadTrack::BeginPlay()
@@ -108,5 +110,44 @@ void ARailroadTrack::GenerateComponents(USplineComponent* spline, TArray<USpline
 	triggerBoxEnd->SetWorldLocation(FVector(posEndPoint.X - 64, posEndPoint.Y, posEndPoint.Z + 54));
 	triggerBoxEnd->SetWorldRotation(relsSpline->GetRotationAtSplinePoint(numberOfPoints - 1, ESplineCoordinateSpace::World));
 
+}
+
+void ARailroadTrack::BeginOverlayTriggerBoxStart(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ABogie * bogieActor = Cast<ABogie>(OtherActor);
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Trigger: Start.... name track: %s "), *this->GetName()));
+	if (OverlappedComponent)
+	{
+		
+		if (bogieActor->actorTrack->GetName() != this->GetName())
+		{			
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Track - %s"), *this->GetName()));			
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Trigger - Red Set Spline")));
+			bogieActor->SetSpline(this->GetSpline());
+			bogieActor->SetStartDistance(0.0);
+			bogieActor->SetDirect(1);
+			bogieActor->actorTrack = this;
+			
+		}
+	}
+}
+
+void ARailroadTrack::BeginOverlayTriggerBoxEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ABogie* bogieActor = Cast<ABogie>(OtherActor);
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("Trigger: End.... name track: %s"), *this->GetName()));
+	if (OverlappedComponent)
+	{
+		if (bogieActor->actorTrack->GetName() != this->GetName())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("Track: - %s"), *this->GetName()));
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("Trigger - End Set Spline")));
+			bogieActor->SetSpline(this->GetSpline());
+			bogieActor->SetStartDistance(this->GetSpline()->GetSplineLength());
+			bogieActor->SetDirect(-1);
+			bogieActor->actorTrack = this;
+			
+		}
+	}
 }
 

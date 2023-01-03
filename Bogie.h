@@ -1,8 +1,13 @@
-
 #pragma once
 
+#ifndef ARAILROADTRACK_H
+#define ARAILROADTRACK_H
+
 #include "RailroadTrack.h"
-#include "RailroadSwitcher.h"
+
+#endif
+//#include "RailroadSwitcher.h"
+#include "General.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -10,6 +15,8 @@
 
 //∆елезнодорожна€ тележка осуществл€ет движение по сплайну, который €вл€етс€ компонентом рельсового пути или стрелочного ветвлени€
 //The railway bogie provides movement along a spline, which is a component of a rail track or turnout
+
+class ARailroadTrack;
 
 UCLASS()
 class SPLINETRAIN_API ABogie : public AActor
@@ -32,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* bogieMesh;
 	UPROPERTY(EditAnywhere)
-		AActor* startTrack;
+		AActor* actorTrack;
 		
 	UPROPERTY(EditAnywhere)
 		float distance = 0.0;
@@ -81,9 +88,12 @@ public:
 	void SetSplineForBogie(USplineComponent* _spline);
 
 	void SetDistance(float deltaTime);
+	void SetStartDistance(float startDistance);
 	void SetTransformForThis();
 
 	USplineComponent* GetSpline();
+	void SetSpline(USplineComponent* splineComponent);
+
 	float GetDistance();
 
 	
@@ -95,3 +105,4 @@ public:
 		void BeginOverlayTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
+
